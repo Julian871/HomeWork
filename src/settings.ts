@@ -41,7 +41,7 @@ type VideoType = {
 }
 
 // create local database
-export let videoDb: VideoType[] = [
+export const videoDb: VideoType[] = [
     {
         id: 0,
         title: "string",
@@ -110,7 +110,6 @@ app.post('/videos', (req: RequestWithBody<{
 
     if(errors.errorsMessages.length){
         res.status(400).send(errors)
-        return
     }
 
     const createAt = new Date()
@@ -140,7 +139,6 @@ app.delete('/videos', (req: Request, res: Response) => {
 })
 
 app.delete('/videos/:id', (req: RequestWithParams<{id: number}>, res: Response) => {
-    const id = +req.params.id
 
     for (let i=0; i<videoDb.length; i++) {
         if (videoDb[i].id === +req.params.id) {
@@ -218,7 +216,6 @@ app.put('/videos/:id', (req: RequestWithBodyAndParams<{id: number}, {
 
         if (errors.errorsMessages.length) {
             res.status(400).send(errors)
-            return
         } else {
 
             video.minAgeRestriction = req.body.minAgeRestriction
