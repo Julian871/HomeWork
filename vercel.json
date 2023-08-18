@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "home-work",
+  "name": "home-work-new",
   "builds": [
     { "src": "src/settings.ts", "use": "@vercel/node" }
   ],
