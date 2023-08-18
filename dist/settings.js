@@ -33,6 +33,9 @@ const videoDb = [
         ]
     }
 ];
+exports.app.get('/', (req, res) => {
+    res.send('Zero page');
+});
 exports.app.get('/videos', (req, res) => {
     res.send(videoDb);
 });

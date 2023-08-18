@@ -43,6 +43,9 @@ const videoDb: VideoType[] = [
     }
 ]
 
+app.get('/', (req: Request, res:Response) => {
+    res.send('Zero page')
+})
 app.get('/videos', (req: Request, res: Response) => {
     res.send(videoDb)
 })
