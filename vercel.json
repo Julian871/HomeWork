@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "home-work",
+  "builds": [
+    { "src": "src/settings.ts", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "src/settings.ts" }
+  ]
+}
