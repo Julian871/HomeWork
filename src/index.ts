@@ -1,6 +1,6 @@
 import {app} from "./settings";
 
-const port = process.env.PORT || 5005
+const port = 3000
 
 
 
