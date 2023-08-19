@@ -91,7 +91,7 @@ exports.app.post('/videos', (req, res) => {
 });
 exports.app.delete('/videos', (req, res) => {
     exports.videoDb.length = 0;
-    res.sendStatus(204);
+    res.send(204);
 });
 exports.app.delete('/videos/:id', (req, res) => {
     for (let i = 0; i < exports.videoDb.length; i++) {
@@ -149,6 +149,9 @@ exports.app.put('/videos/:id', (req, res) => {
             const testDate = new Date();
             testDate.setDate(createAt.getDate() + 1);
             video.publicationDate = testDate.toISOString();
+        }
+        else if (typeof publicationDate != 'string') {
+            errors.errorsMessages.push({ message: 'Incorrect publicationDate', field: 'publicationDate' });
         }
         else {
             video.publicationDate = req.body.publicationDate;

@@ -134,7 +134,7 @@ app.post('/videos', (req: RequestWithBody<{
 
 app.delete('/videos', (req: Request, res: Response) => {
     videoDb.length = 0
-    res.sendStatus(204)
+    res.send(204)
 })
 
 app.delete('/videos/:id', (req: RequestWithParams<{id: number}>, res: Response) => {
