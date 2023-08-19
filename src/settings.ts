@@ -137,7 +137,7 @@ app.delete('/videos', (req: Request, res: Response) => {
     res.send(204)
 })
 
-app.delete('/videos/:id', (req: RequestWithParams<{id: number}>, res: Response) => {
+app.delete('/videos/:id', (req: Request, res: Response) => {
 
     for (let i=0; i<videoDb.length; i++) {
         if (videoDb[i].id === +req.params.id) {
