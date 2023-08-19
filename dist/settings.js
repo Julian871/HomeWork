@@ -164,9 +164,9 @@ exports.app.put('/videos/:id', (req, res) => {
         }
     }
     else if (!video) {
-        res.send(204);
+        res.send(404);
     }
     else {
-        res.send(404);
+        res.send(204);
     }
 });

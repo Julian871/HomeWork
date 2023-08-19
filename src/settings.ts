@@ -209,7 +209,9 @@ app.put('/videos/:id', (req: RequestWithBodyAndParams<{id: number}, {
             const testDate = new Date()
             testDate.setDate(createAt.getDate() + 1)
             video.publicationDate = testDate.toISOString()
-        } else {
+        }else if (typeof publicationDate != 'string'){
+            errors.errorsMessages.push({message: 'Incorrect publicationDate', field: 'publicationDate'})
+        }else {
             video.publicationDate = req.body.publicationDate
         }
 
@@ -224,9 +226,9 @@ app.put('/videos/:id', (req: RequestWithBodyAndParams<{id: number}, {
             res.status(201).send(video)
         }
     } else if(!video){
-        res.send(204)
-    }else {
         res.send(404)
+    }else {
+        res.send(204)
     }
 
 })
