@@ -163,7 +163,7 @@ exports.app.put('/videos/:id', (req, res) => {
             video.minAgeRestriction = req.body.minAgeRestriction;
             video.title = req.body.title;
             video.author = req.body.author;
-            res.status(201).send(video);
+            res.status(204).send(video);
         }
     }
     else if (!video) {

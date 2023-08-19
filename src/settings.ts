@@ -223,7 +223,7 @@ app.put('/videos/:id', (req: RequestWithBodyAndParams<{id: number}, {
             video.title = req.body.title
             video.author = req.body.author
 
-            res.status(201).send(video)
+            res.status(204).send(video)
         }
     } else if(!video){
         res.send(404)
