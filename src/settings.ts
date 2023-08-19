@@ -99,24 +99,22 @@ app.post('/videos', (req: RequestWithBody<{
 
     let {title, author, availableResolutions} = req.body
 
-    if (!title || !title.length || title.trim().length > 40){
+    if (!title || !title.trim || title.length > 40){
         errors.errorsMessages.push({message: 'Incorrect title', field: 'title'})
     }
 
-    if(!author || !author.length || author.trim().length > 20){
+    if(!author || !author.trim || author.length > 20){
         errors.errorsMessages.push({message: 'Incorrect author', field: 'author'})
     }
 
     if(Array.isArray(availableResolutions) && availableResolutions.length){
-        availableResolutions.map((r) => {
-            !AvailableResolutions[r] && errors.errorsMessages.push({
+        const isValid = availableResolutions.every(el => Object.values(AvailableResolutions).includes(el))
+        if(!isValid){
+            errors.errorsMessages.push({
                 message:'Incorrect availableResolutions',
                 field: 'availableResolutions'
             })
-        })
-
-    }else {
-        availableResolutions = []
+        }
     }
 
     if(errors.errorsMessages.length){
