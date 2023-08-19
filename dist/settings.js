@@ -33,6 +33,12 @@ exports.videoDb = [
         ]
     }
 ];
+const validatePost = () => {
+};
+const validatePut = () => {
+    const err = validatePost();
+    //.....
+};
 exports.app.get('/', (req, res) => {
     res.send('Zero page');
 });
@@ -89,7 +95,7 @@ exports.app.post('/videos', (req, res) => {
     exports.videoDb.push(newVideo);
     res.status(201).send(newVideo);
 });
-exports.app.delete('/videos', (req, res) => {
+exports.app.delete('/testing/all-data', (req, res) => {
     exports.videoDb.length = 0;
     res.send(204);
 });
@@ -105,71 +111,50 @@ exports.app.delete('/videos/:id', (req, res) => {
 });
 exports.app.put('/videos/:id', (req, res) => {
     const id = +req.params.id;
-    let video = exports.videoDb.find((video) => video.id === id);
+    const video = exports.videoDb.find((video) => video.id === id);
     if (video) {
-        let errors = {
+        const errors = {
             errorsMessages: []
         };
-        let { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
-        if (!title || !title.length || title.trim().length > 40) {
+        const { title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate } = req.body;
+        if (!title || !title.trim() || title.length > 40) {
             errors.errorsMessages.push({ message: 'Incorrect title', field: 'title' });
         }
-        if (!author || !author.length || author.trim().length > 20) {
+        if (!author || !author.trim() || author.length > 20) {
             errors.errorsMessages.push({ message: 'Incorrect author', field: 'author' });
         }
         if (Array.isArray(availableResolutions) && availableResolutions.length) {
-            availableResolutions.map((r) => {
-                !AvailableResolutions[r] && errors.errorsMessages.push({
+            const isValid = availableResolutions.every(el => Object.values(AvailableResolutions).includes(el));
+            if (!isValid) {
+                errors.errorsMessages.push({
                     message: 'Incorrect availableResolutions',
                     field: 'availableResolutions'
                 });
-            });
+            }
         }
-        else if (!availableResolutions) {
-            availableResolutions = [];
-            video.availableResolutions = availableResolutions;
-        }
-        if (!canBeDownloaded) {
-            video.canBeDownloaded = false;
-        }
-        else if (typeof canBeDownloaded != "boolean") {
+        if (!canBeDownloaded || typeof canBeDownloaded !== "boolean") {
             errors.errorsMessages.push({ message: 'Incorrect canBeDownloaded', field: 'canBeDownloaded' });
         }
-        else {
-            video.canBeDownloaded = req.body.canBeDownloaded;
-        }
-        if (!minAgeRestriction) {
-            minAgeRestriction = null;
-        }
-        else if (typeof minAgeRestriction != "number" || minAgeRestriction > 18 || minAgeRestriction < 1) {
+        if (!minAgeRestriction || typeof minAgeRestriction !== "number" || minAgeRestriction > 18 || minAgeRestriction < 1) {
             errors.errorsMessages.push({ message: 'Incorrect minAgeRestriction', field: 'minAgeRestriction' });
         }
-        if (!publicationDate) {
-            const createAt = new Date();
-            const testDate = new Date();
-            testDate.setDate(createAt.getDate() + 1);
-            video.publicationDate = testDate.toISOString();
-        }
-        else if (typeof publicationDate != 'string') {
+        if (!publicationDate || typeof publicationDate !== 'string') {
             errors.errorsMessages.push({ message: 'Incorrect publicationDate', field: 'publicationDate' });
-        }
-        else {
-            video.publicationDate = req.body.publicationDate;
         }
         if (errors.errorsMessages.length) {
             res.status(400).send(errors);
         }
         else {
-            video.minAgeRestriction = req.body.minAgeRestriction;
-            video.title = req.body.title;
-            video.author = req.body.author;
-            res.status(204).send(video);
+            video.availableResolutions = availableResolutions;
+            video.minAgeRestriction = minAgeRestriction;
+            video.canBeDownloaded = canBeDownloaded;
+            video.publicationDate = publicationDate;
+            video.title = title;
+            video.author = author;
+            res.status(204).send();
         }
     }
-    else if (!video) {
-        res.send(404);
-    }
     else {
-        res.send(204);
+        res.send(404);
     }
 });

@@ -55,6 +55,17 @@ export const videoDb: VideoType[] = [
     }
 ]
 
+const validatePost = () => {
+
+}
+
+const validatePut = () => {
+    const err = validatePost()
+    //.....
+}
+
+
+
 app.get('/', (req: Request, res:Response) => {
     res.send('Zero page')
 })
@@ -132,7 +143,7 @@ app.post('/videos', (req: RequestWithBody<{
     res.status(201).send(newVideo)
 })
 
-app.delete('/videos', (req: Request, res: Response) => {
+app.delete('/testing/all-data', (req: Request, res: Response) => {
     videoDb.length = 0
     res.send(204)
 })
@@ -155,80 +166,66 @@ app.put('/videos/:id', (req: RequestWithBodyAndParams<{id: number}, {
     author: string,
     availableResolutions: AvailableResolutions[],
     canBeDownloaded: boolean,
-    minAgeRestriction: number | null,
+    minAgeRestriction: number,
     publicationDate: string
 }>, res: Response) => {
     const id = +req.params.id
-    let video = videoDb.find((video) => video.id === id)
+    const video = videoDb.find((video) => video.id === id)
 
     if(video) {
 
-        let errors: ErrorType = {
+        const errors: ErrorType = {
             errorsMessages: []
         }
 
-        let {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
+        const {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
 
-        if (!title || !title.length || title.trim().length > 40) {
+        if (!title || !title.trim() || title.length > 40) {
             errors.errorsMessages.push({message: 'Incorrect title', field: 'title'})
         }
 
-        if (!author || !author.length || author.trim().length > 20) {
+        if (!author || !author.trim() || author.length > 20) {
             errors.errorsMessages.push({message: 'Incorrect author', field: 'author'})
         }
 
         if (Array.isArray(availableResolutions) && availableResolutions.length) {
-            availableResolutions.map((r) => {
-                !AvailableResolutions[r] && errors.errorsMessages.push({
+            const isValid = availableResolutions.every(el => Object.values(AvailableResolutions).includes(el))
+            if(!isValid){
+                errors.errorsMessages.push({
                     message: 'Incorrect availableResolutions',
                     field: 'availableResolutions'
                 })
-            })
-
-        } else if (!availableResolutions) {
-            availableResolutions = []
-            video.availableResolutions = availableResolutions
+            }
         }
 
-        if (!canBeDownloaded) {
-            video.canBeDownloaded = false
-        }else if (typeof canBeDownloaded != "boolean") {
+
+        if (!canBeDownloaded || typeof canBeDownloaded !== "boolean") {
             errors.errorsMessages.push({message: 'Incorrect canBeDownloaded', field: 'canBeDownloaded'})
-        }else {
-            video.canBeDownloaded = req.body.canBeDownloaded
         }
 
-        if (!minAgeRestriction) {
-            minAgeRestriction = null
-        } else if (typeof minAgeRestriction != "number" || minAgeRestriction > 18 || minAgeRestriction < 1) {
+        if (!minAgeRestriction || typeof minAgeRestriction !== "number" || minAgeRestriction > 18 || minAgeRestriction < 1) {
             errors.errorsMessages.push({message: 'Incorrect minAgeRestriction', field: 'minAgeRestriction'})
         }
 
-        if (!publicationDate){
-            const createAt = new Date()
-            const testDate = new Date()
-            testDate.setDate(createAt.getDate() + 1)
-            video.publicationDate = testDate.toISOString()
-        }else if (typeof publicationDate != 'string'){
+        if (!publicationDate || typeof publicationDate !== 'string'){
             errors.errorsMessages.push({message: 'Incorrect publicationDate', field: 'publicationDate'})
-        }else {
-            video.publicationDate = req.body.publicationDate
         }
 
         if (errors.errorsMessages.length) {
             res.status(400).send(errors)
         } else {
 
-            video.minAgeRestriction = req.body.minAgeRestriction
-            video.title = req.body.title
-            video.author = req.body.author
+            video.availableResolutions = availableResolutions
+            video.minAgeRestriction = minAgeRestriction
+            video.canBeDownloaded = canBeDownloaded
+            video.publicationDate = publicationDate
+            video.title = title
+            video.author = author
 
-            res.status(204).send(video)
+            res.status(204).send()
         }
-    } else if(!video){
+    } else {
         res.send(404)
-    }else {
-        res.send(204)
     }
 
 })
