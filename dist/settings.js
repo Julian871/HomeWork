@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.videoDb = exports.app = void 0;
+exports.videosRouter = exports.videoDb = exports.app = void 0;
 const express_1 = __importStar(require("express"));
 exports.app = (0, express_1.default)();
 exports.app.use(express_1.default.json());
@@ -53,15 +53,15 @@ exports.videoDb = [
         ]
     }
 ];
-const videosRouter = (0, express_1.Router)({});
-exports.app.use('/videos', videosRouter);
+exports.videosRouter = (0, express_1.Router)({});
+exports.app.use('/videos', exports.videosRouter);
 exports.app.get('/', (req, res) => {
     res.send('Zero page');
 });
-videosRouter.get('/', (req, res) => {
+exports.videosRouter.get('/', (req, res) => {
     res.send(exports.videoDb);
 });
-videosRouter.get('/:id', (req, res) => {
+exports.videosRouter.get('/:id', (req, res) => {
     const id = +req.params.id;
     const video = exports.videoDb.find((video) => video.id === id);
     if (!video) {
@@ -70,7 +70,7 @@ videosRouter.get('/:id', (req, res) => {
     }
     res.send(video);
 });
-videosRouter.post('/', (req, res) => {
+exports.videosRouter.post('/', (req, res) => {
     let errors = {
         errorsMessages: []
     };
@@ -115,7 +115,7 @@ exports.app.delete('/testing/all-data', (req, res) => {
     exports.videoDb.length = 0;
     res.send(204);
 });
-videosRouter.delete('/:id', (req, res) => {
+exports.videosRouter.delete('/:id', (req, res) => {
     for (let i = 0; i < exports.videoDb.length; i++) {
         if (exports.videoDb[i].id === +req.params.id) {
             exports.videoDb.splice(i, 1);
@@ -125,7 +125,7 @@ videosRouter.delete('/:id', (req, res) => {
     }
     res.sendStatus(404);
 });
-videosRouter.put('/:id', (req, res) => {
+exports.videosRouter.put('/:id', (req, res) => {
     const id = +req.params.id;
     const video = exports.videoDb.find((video) => video.id === id);
     if (video) {
@@ -148,7 +148,7 @@ videosRouter.put('/:id', (req, res) => {
                 });
             }
         }
-        if (!canBeDownloaded || typeof canBeDownloaded !== "boolean") {
+        if (typeof canBeDownloaded !== 'undefined' && typeof canBeDownloaded !== 'boolean') {
             errors.errorsMessages.push({ message: 'Incorrect canBeDownloaded', field: 'canBeDownloaded' });
         }
         if (!minAgeRestriction || typeof minAgeRestriction !== "number" || minAgeRestriction > 18 || minAgeRestriction < 1) {

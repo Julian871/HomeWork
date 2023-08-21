@@ -55,7 +55,7 @@ export const videoDb: VideoType[] = [
     }
 ]
 
-const videosRouter = Router({})
+export const videosRouter = Router({})
 
 app.use('/videos', videosRouter)
 
@@ -192,7 +192,7 @@ videosRouter.put('/:id', (req: RequestWithBodyAndParams<{id: number}, {
         }
 
 
-        if (!canBeDownloaded || typeof canBeDownloaded !== "boolean") {
+        if (typeof canBeDownloaded !== 'undefined' && typeof canBeDownloaded !== 'boolean') {
             errors.errorsMessages.push({message: 'Incorrect canBeDownloaded', field: 'canBeDownloaded'})
         }
 
