@@ -1,4 +1,4 @@
-import express, {Request, Response} from 'express';
+import express, {Request, Response, Router} from 'express';
 
 export const app = express()
 
@@ -12,7 +12,6 @@ type ErrorsMessages = {
     message: string
     field: string
 }
-
 type ErrorType = {
     errorsMessages: ErrorsMessages[]
 }
@@ -56,26 +55,20 @@ export const videoDb: VideoType[] = [
     }
 ]
 
-const validatePost = () => {
+const videosRouter = Router({})
 
-}
-
-const validatePut = () => {
-    const err = validatePost()
-    //.....
-}
-
+app.use('/videos', videosRouter)
 
 
 app.get('/', (req: Request, res:Response) => {
     res.send('Zero page')
 })
 
-app.get('/videos', (req: Request, res: Response) => {
+videosRouter.get('/', (req: Request, res: Response) => {
     res.send(videoDb)
 })
 
-app.get('/videos/:id', (req: RequestWithParams<{id: number}>, res: Response) => {
+videosRouter.get('/:id', (req: RequestWithParams<{id: number}>, res: Response) => {
     const id = +req.params.id
 
     const video = videoDb.find((video) => video.id === id)
@@ -88,7 +81,7 @@ app.get('/videos/:id', (req: RequestWithParams<{id: number}>, res: Response) => 
     res.send(video)
 })
 
-app.post('/videos', (req: RequestWithBody<{
+videosRouter.post('/', (req: RequestWithBody<{
     title: string,
     author: string,
     availableResolutions: AvailableResolutions[]
@@ -119,27 +112,28 @@ app.post('/videos', (req: RequestWithBody<{
 
     if(errors.errorsMessages.length){
         res.status(400).send(errors)
+    } else {
+
+        const createAt = new Date()
+        const publicationDate = new Date()
+
+        publicationDate.setDate(createAt.getDate() + 1)
+
+        const newVideo: VideoType = {
+            id: +(new Date()),
+            canBeDownloaded: false,
+            minAgeRestriction: null,
+            createdAt: createAt.toISOString(),
+            publicationDate: publicationDate.toISOString(),
+            title,
+            author,
+            availableResolutions
+        }
+
+        videoDb.push(newVideo)
+
+        res.status(201).send(newVideo)
     }
-
-    const createAt = new Date()
-    const publicationDate = new Date()
-
-    publicationDate.setDate(createAt.getDate() + 1)
-
-    const newVideo: VideoType = {
-        id: +(new Date()),
-        canBeDownloaded: false,
-        minAgeRestriction: null,
-        createdAt: createAt.toISOString(),
-        publicationDate: publicationDate.toISOString(),
-        title,
-        author,
-        availableResolutions
-    }
-
-    videoDb.push(newVideo)
-
-    res.status(201).send(newVideo)
 })
 
 app.delete('/testing/all-data', (req: Request, res: Response) => {
@@ -147,7 +141,7 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
     res.send(204)
 })
 
-app.delete('/videos/:id', (req: Request, res: Response) => {
+videosRouter.delete('/:id', (req: Request, res: Response) => {
 
     for (let i=0; i<videoDb.length; i++) {
         if (videoDb[i].id === +req.params.id) {
@@ -160,7 +154,7 @@ app.delete('/videos/:id', (req: Request, res: Response) => {
     res.sendStatus(404)
 })
 
-app.put('/videos/:id', (req: RequestWithBodyAndParams<{id: number}, {
+videosRouter.put('/:id', (req: RequestWithBodyAndParams<{id: number}, {
     title: string,
     author: string,
     availableResolutions: AvailableResolutions[],

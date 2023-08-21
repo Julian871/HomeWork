@@ -1,7 +1,7 @@
 import {app} from "./settings";
 
-const port = 5005
 
+const port = 5001
 
 
 app.listen(port, () => {
