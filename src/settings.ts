@@ -220,5 +220,4 @@ videosRouter.put('/:id', (req: RequestWithBodyAndParams<{id: number}, {
     } else {
         res.send(404)
     }
-
 })
