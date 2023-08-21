@@ -163,7 +163,7 @@ exports.videosRouter.put('/:id', (req, res) => {
         else {
             video.availableResolutions = availableResolutions;
             video.minAgeRestriction = minAgeRestriction;
-            video.canBeDownloaded = canBeDownloaded;
+            video.canBeDownloaded = canBeDownloaded || false;
             video.publicationDate = publicationDate;
             video.title = title;
             video.author = author;

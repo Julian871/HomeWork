@@ -191,7 +191,6 @@ videosRouter.put('/:id', (req: RequestWithBodyAndParams<{id: number}, {
             }
         }
 
-
         if (typeof canBeDownloaded !== 'undefined' && typeof canBeDownloaded !== 'boolean') {
             errors.errorsMessages.push({message: 'Incorrect canBeDownloaded', field: 'canBeDownloaded'})
         }
@@ -210,7 +209,7 @@ videosRouter.put('/:id', (req: RequestWithBodyAndParams<{id: number}, {
 
             video.availableResolutions = availableResolutions
             video.minAgeRestriction = minAgeRestriction
-            video.canBeDownloaded = canBeDownloaded
+            video.canBeDownloaded = canBeDownloaded || false
             video.publicationDate = publicationDate
             video.title = title
             video.author = author
